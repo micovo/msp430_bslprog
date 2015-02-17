@@ -5,7 +5,7 @@ This project is in alpha alpha alpha version (basicaly it's only bunch of spaghe
 
 Let me know if You are interested in testing or adding support for other MSP430 microcontrolers
 
-
+![Alt text](http://img.micovo.cz/bslprog_github_screenshot2.png "MSP430 BSLprog screenshot")
 
 More information about TI Bootstrap Loader is available at
 http://processors.wiki.ti.com/index.php/BSL_%28MSP430%29
