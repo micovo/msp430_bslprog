@@ -278,16 +278,14 @@ namespace MSP430_BSLprog
             AH = (byte)((addr & 0xFF00) / 256);
 
             SendBSLCommand(BSLCommand.Erase_main_or_info, 0, 0, AL, AH, 0x02, 0xA5, null);
-
-            return;
-
+            
 
             len = 128;
             data = new byte[len];
 
             foreach (Segment seg in Segments)
             {
-                if (seg.addr <= main_seg_start)
+                if (seg.addr >= main_seg_start)
                 {
                     int i = 0;
                     addr = seg.addr;
