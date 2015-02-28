@@ -260,8 +260,10 @@ namespace MSP430_BSLprog
                     {
                         line = sr.ReadLine().Trim();
 
+                        if (line.StartsWith("//")) continue; //ignore comment lines
+
                         var arr = line.Split(';');
-                        if (arr.Length == 3)
+                        if (arr.Length >= 3)
                         {
                             if ((int.TryParse(arr[1], out baudrate)) &&
                                 (int.TryParse(arr[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addr)))
