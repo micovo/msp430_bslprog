@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Threading;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace MSP430_BSLprog
 {
@@ -17,7 +18,16 @@ namespace MSP430_BSLprog
     public partial class MainForm : Form
     {
         BSLWorker worker;
+        BSLDevice actualDevice;
 
+        List<BSLDevice> devices = new List<BSLDevice>();
+
+
+        const string DeviceFilename = "devices.ini";
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -28,7 +38,11 @@ namespace MSP430_BSLprog
         }
         
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="reason"></param>
         private void worker_OnFlashProcExit(object sender, string reason)
         {
             if (reason == "")
@@ -57,7 +71,11 @@ namespace MSP430_BSLprog
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="text"></param>
         private void worker_OnLogRequest(object sender, string text)
         {
             if (textBoxLog.InvokeRequired)
@@ -71,7 +89,10 @@ namespace MSP430_BSLprog
         }
 
 
- 
+        /// <summary>
+        /// Thread safe text append
+        /// </summary>
+        /// <param name="text"></param>
         private void AddLogText(string text)
         {
             if (textBoxLog.InvokeRequired)
@@ -86,6 +107,11 @@ namespace MSP430_BSLprog
         }
 
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buff"></param>
         private void AddLogText(byte [] buff)
         {
             string s = DateTime.Now.ToLongTimeString() + " - ";
@@ -210,6 +236,56 @@ namespace MSP430_BSLprog
             }
         }
 
+
+        /// <summary>
+        /// Loads devices from devices.ini file and filling up the comboBox for choosing device to work with
+        /// </summary>
+        private void FillDevicesList()
+        {
+
+            comboBoxDevices.Items.Clear();
+
+            if (File.Exists(DeviceFilename))
+            {
+                devices.Clear();
+
+                using (StreamReader sr = new StreamReader(DeviceFilename))
+                {
+                    string line;
+                    int addr;
+                    int baudrate;
+                    string name;
+
+                    while (sr.EndOfStream == false)
+                    {
+                        line = sr.ReadLine().Trim();
+
+                        var arr = line.Split(';');
+                        if (arr.Length == 3)
+                        {
+                            if ((int.TryParse(arr[1], out baudrate)) &&
+                                (int.TryParse(arr[2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out addr)))
+                            {
+                                name = arr[0];
+                                devices.Add(new BSLDevice(name, addr, baudrate));
+                            }
+                        }
+                    }
+                }
+
+                comboBoxDevices.Items.AddRange(devices.ToArray());
+            }
+
+            comboBoxDevices.Items.Add("Custom");
+            comboBoxDevices.SelectedIndex = 0;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_Load(object sender, EventArgs e)
         {
             string[] ports = System.IO.Ports.SerialPort.GetPortNames();
@@ -230,21 +306,34 @@ namespace MSP430_BSLprog
             comboBoxBaudrate.SelectedText = "9600";
 
             comboBoxDebugCommand.SelectedIndex = 0;
+
+
+            FillDevicesList();
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonFlashMAIN_Click(object sender, EventArgs e)
         {
             buttonFlashALL.Enabled = false;
             buttonFlashMAIN.Enabled = false;
 
-            int mainSegStart = int.Parse(textBoxMainSegStart.Text, System.Globalization.NumberStyles.HexNumber);
+            int mainSegStart = int.Parse(textBoxMainSegStart.Text, NumberStyles.HexNumber);
 
             worker.BSL_password = StringToByteArray(textBoxBSLPass.Text);
             Task t = new Task(() => worker.FlashMainProc(mainSegStart));
             t.Start();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonFlashALL_Click(object sender, EventArgs e)
         {
             buttonFlashALL.Enabled = false;
@@ -255,11 +344,22 @@ namespace MSP430_BSLprog
             t.Start();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonFirmwareLoad_Click(object sender, EventArgs e)
         {
             OpenFirmwareDialog();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void listBoxSegments_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBoxFirmwareCode.Text = "";
@@ -296,6 +396,12 @@ namespace MSP430_BSLprog
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void comboBoxBaudrate_SelectedIndexChanged(object sender, EventArgs e)
         {
             int baud = 0;
@@ -305,23 +411,42 @@ namespace MSP430_BSLprog
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void comboBoxPort_SelectedIndexChanged(object sender, EventArgs e)
         {
             serialPort1.PortName = (string)comboBoxPort.SelectedItem;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void checkBoxInvertRESET_CheckedChanged(object sender, EventArgs e)
         {
             worker.InvertRESET = checkBoxInvertRESET.Checked;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void checkBoxInvertTEST_CheckedChanged(object sender, EventArgs e)
         {
             worker.InvertTEST = checkBoxInvertTEST.Checked;
         }
 
    
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonDebugSend_Click(object sender, EventArgs e)
         {
             string s_cmnd = (string)comboBoxDebugCommand.SelectedItem;
@@ -330,8 +455,8 @@ namespace MSP430_BSLprog
 
             BSLCommand cmnd = (BSLCommand)Enum.Parse(typeof(BSLCommand), s_cmnd);
 
-            int addr = int.Parse(textBoxDebugAddr.Text, System.Globalization.NumberStyles.HexNumber);
-            int length = int.Parse(textBoxDebugLen.Text, System.Globalization.NumberStyles.HexNumber);
+            int addr = int.Parse(textBoxDebugAddr.Text, NumberStyles.HexNumber);
+            int length = int.Parse(textBoxDebugLen.Text, NumberStyles.HexNumber);
 
             AL = (byte)(addr & 0xFF);
             AH = (byte)((addr & 0xFF00) / 256);
@@ -343,6 +468,7 @@ namespace MSP430_BSLprog
             
             worker.SendBSLCommand(cmnd,0,0,AL,AH,LL,LH,data);
         }
+
 
         /// <summary>
         /// Delitious Stackoverflow copypasta, mmmm yummy
@@ -357,6 +483,11 @@ namespace MSP430_BSLprog
                              .ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (serialPort1.IsOpen)
@@ -365,21 +496,44 @@ namespace MSP430_BSLprog
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonDebugStartBSL_Click(object sender, EventArgs e)
         {
             worker.StartBSL();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonDebugReset_Click(object sender, EventArgs e)
         {
             worker.RestartMCU();
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonWorkerStop_Click(object sender, EventArgs e)
         {
             worker.Stop();
         }
 
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonLoadBSLPass_Click(object sender, EventArgs e)
         {
             string s = "";
@@ -418,6 +572,12 @@ namespace MSP430_BSLprog
             textBoxBSLPass.Text = s;
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonBlankBSLPass_Click(object sender, EventArgs e)
         {
             string s = "";
@@ -429,6 +589,40 @@ namespace MSP430_BSLprog
             for (int i = 0; i < 32; i++) s += data[i].ToString("X2");
 
             textBoxBSLPass.Text = s;
+        }
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBoxDevices_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (sender.GetType() == typeof(ComboBox))
+            {
+                
+                if (comboBoxDevices.SelectedItem.GetType() == typeof(string))
+                {
+                    textBoxMainSegStart.ReadOnly = false;
+                }
+                else if (comboBoxDevices.SelectedItem.GetType() == typeof(BSLDevice))
+                {
+                    textBoxMainSegStart.ReadOnly = true;
+
+                    actualDevice = (BSLDevice)comboBoxDevices.SelectedItem;
+                    textBoxMainSegStart.Text = actualDevice.Mainseg_address.ToString("X4");
+                }
+                else
+                {
+                    //This should not happend
+                }
+            }
+            else
+            {
+                //This should not happend too, I guess :)
+            }
         }
 
        

@@ -47,10 +47,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.textBoxFirmwareCode = new System.Windows.Forms.TextBox();
             this.listBoxSegments = new System.Windows.Forms.ListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxTargetDevice = new System.Windows.Forms.GroupBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textBoxMainSegStart = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.buttonBlankBSLPass = new System.Windows.Forms.Button();
             this.buttonLoadBSLPass = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.textBoxBSLPass = new System.Windows.Forms.TextBox();
@@ -70,10 +71,12 @@
             this.label8 = new System.Windows.Forms.Label();
             this.comboBoxDebugCommand = new System.Windows.Forms.ComboBox();
             this.buttonDebugStartBSL = new System.Windows.Forms.Button();
-            this.buttonBlankBSLPass = new System.Windows.Forms.Button();
+            this.comboBoxDevices = new System.Windows.Forms.ComboBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.groupBoxSerial.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
+            this.groupBoxTargetDevice.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -90,7 +93,7 @@
             this.textBoxLog.Multiline = true;
             this.textBoxLog.Name = "textBoxLog";
             this.textBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxLog.Size = new System.Drawing.Size(373, 572);
+            this.textBoxLog.Size = new System.Drawing.Size(373, 543);
             this.textBoxLog.TabIndex = 3;
             // 
             // serialPort1
@@ -100,7 +103,7 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 609);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 580);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(955, 22);
             this.statusStrip1.TabIndex = 7;
@@ -201,7 +204,7 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.textBoxFirmwareCode);
             this.groupBox1.Controls.Add(this.listBoxSegments);
-            this.groupBox1.Location = new System.Drawing.Point(12, 280);
+            this.groupBox1.Location = new System.Drawing.Point(12, 251);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(10);
             this.groupBox1.Size = new System.Drawing.Size(538, 221);
@@ -273,22 +276,25 @@
             this.listBoxSegments.TabIndex = 0;
             this.listBoxSegments.SelectedIndexChanged += new System.EventHandler(this.listBoxSegments_SelectedIndexChanged);
             // 
-            // groupBox2
+            // groupBoxTargetDevice
             // 
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.textBoxMainSegStart);
-            this.groupBox2.Location = new System.Drawing.Point(199, 12);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(10);
-            this.groupBox2.Size = new System.Drawing.Size(199, 49);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Options";
+            this.groupBoxTargetDevice.Controls.Add(this.label13);
+            this.groupBoxTargetDevice.Controls.Add(this.label12);
+            this.groupBoxTargetDevice.Controls.Add(this.comboBoxDevices);
+            this.groupBoxTargetDevice.Controls.Add(this.label7);
+            this.groupBoxTargetDevice.Controls.Add(this.textBoxMainSegStart);
+            this.groupBoxTargetDevice.Location = new System.Drawing.Point(199, 12);
+            this.groupBoxTargetDevice.Name = "groupBoxTargetDevice";
+            this.groupBoxTargetDevice.Padding = new System.Windows.Forms.Padding(10);
+            this.groupBoxTargetDevice.Size = new System.Drawing.Size(199, 137);
+            this.groupBoxTargetDevice.TabIndex = 10;
+            this.groupBoxTargetDevice.TabStop = false;
+            this.groupBoxTargetDevice.Text = "Target device";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 23);
+            this.label7.Location = new System.Drawing.Point(13, 86);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(96, 13);
             this.label7.TabIndex = 10;
@@ -297,9 +303,10 @@
             // textBoxMainSegStart
             // 
             this.textBoxMainSegStart.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.textBoxMainSegStart.Location = new System.Drawing.Point(134, 20);
+            this.textBoxMainSegStart.Location = new System.Drawing.Point(134, 84);
             this.textBoxMainSegStart.MaxLength = 4;
             this.textBoxMainSegStart.Name = "textBoxMainSegStart";
+            this.textBoxMainSegStart.ReadOnly = true;
             this.textBoxMainSegStart.Size = new System.Drawing.Size(52, 20);
             this.textBoxMainSegStart.TabIndex = 9;
             this.textBoxMainSegStart.Text = "C000";
@@ -311,12 +318,22 @@
             this.groupBox3.Controls.Add(this.buttonLoadBSLPass);
             this.groupBox3.Controls.Add(this.label6);
             this.groupBox3.Controls.Add(this.textBoxBSLPass);
-            this.groupBox3.Location = new System.Drawing.Point(12, 507);
+            this.groupBox3.Location = new System.Drawing.Point(12, 478);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(538, 84);
             this.groupBox3.TabIndex = 11;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Security";
+            // 
+            // buttonBlankBSLPass
+            // 
+            this.buttonBlankBSLPass.Location = new System.Drawing.Point(335, 50);
+            this.buttonBlankBSLPass.Name = "buttonBlankBSLPass";
+            this.buttonBlankBSLPass.Size = new System.Drawing.Size(75, 23);
+            this.buttonBlankBSLPass.TabIndex = 13;
+            this.buttonBlankBSLPass.Text = "Blank Pass";
+            this.buttonBlankBSLPass.UseVisualStyleBackColor = true;
+            this.buttonBlankBSLPass.Click += new System.EventHandler(this.buttonBlankBSLPass_Click);
             // 
             // buttonLoadBSLPass
             // 
@@ -530,40 +547,57 @@
             this.buttonDebugStartBSL.UseVisualStyleBackColor = true;
             this.buttonDebugStartBSL.Click += new System.EventHandler(this.buttonDebugStartBSL_Click);
             // 
-            // buttonBlankBSLPass
+            // comboBoxDevices
             // 
-            this.buttonBlankBSLPass.Location = new System.Drawing.Point(335, 50);
-            this.buttonBlankBSLPass.Name = "buttonBlankBSLPass";
-            this.buttonBlankBSLPass.Size = new System.Drawing.Size(75, 23);
-            this.buttonBlankBSLPass.TabIndex = 13;
-            this.buttonBlankBSLPass.Text = "Blank Pass";
-            this.buttonBlankBSLPass.UseVisualStyleBackColor = true;
-            this.buttonBlankBSLPass.Click += new System.EventHandler(this.buttonBlankBSLPass_Click);
+            this.comboBoxDevices.FormattingEnabled = true;
+            this.comboBoxDevices.Location = new System.Drawing.Point(72, 28);
+            this.comboBoxDevices.Name = "comboBoxDevices";
+            this.comboBoxDevices.Size = new System.Drawing.Size(114, 21);
+            this.comboBoxDevices.TabIndex = 11;
+            this.comboBoxDevices.SelectionChangeCommitted += new System.EventHandler(this.comboBoxDevices_SelectionChangeCommitted);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(13, 31);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(41, 13);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "Device";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(13, 107);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(174, 13);
+            this.label13.TabIndex = 13;
+            this.label13.Text = "( Pointer used by Flash MAIN proc )";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(955, 631);
+            this.ClientSize = new System.Drawing.Size(955, 602);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBoxTargetDevice);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBoxSerial);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.textBoxLog);
-            this.MinimumSize = new System.Drawing.Size(971, 616);
+            this.MinimumSize = new System.Drawing.Size(971, 640);
             this.Name = "MainForm";
-            this.Text = "MSP430 BSPloader";
+            this.Text = "MSP430 BSLprog";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.groupBoxSerial.ResumeLayout(false);
             this.groupBoxSerial.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.groupBoxTargetDevice.ResumeLayout(false);
+            this.groupBoxTargetDevice.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -594,7 +628,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxFirmwareCode;
         private System.Windows.Forms.ListBox listBoxSegments;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBoxTargetDevice;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox textBoxBSLPass;
@@ -618,6 +652,9 @@
         private System.Windows.Forms.Button buttonWorkerStop;
         private System.Windows.Forms.Button buttonLoadBSLPass;
         private System.Windows.Forms.Button buttonBlankBSLPass;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.ComboBox comboBoxDevices;
+        private System.Windows.Forms.Label label13;
     }
 }
 
